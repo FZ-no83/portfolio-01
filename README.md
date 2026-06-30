@@ -1,8 +1,7 @@
 # README
 
-# プロジェクト名
-## 営業運営支援システム
-#### 〜販売・仕入・経費・在庫を一元管理するWebアプリケーション〜
+# プロジェクト名：営業運営支援システム
+###　          〜販売・仕入・経費・在庫を一元管理するWebアプリケーション〜
  
 ## 概要
 - 小規模店舗や食堂などを対象とした営業運営支援システムです。
@@ -11,19 +10,19 @@
 - 可視化できます。
 
 ## デモ / URL
-- ログインページ
+#### ログインページ
 ![alt text](./README-picture/LoginPage_2026-06-28.png)
 
-- 仕入管理
+#### 仕入管理
 ![alt text](<./README-picture/PurchasePage_ 2026-06-28.png>)
 
-- 販売管理
+#### 販売管理
 ![alt text](./README-picture/SalesPage_2026-06-28.png)
 
-- ダッシュボード
+#### ダッシュボード
 ![alt text](<./README-picture/DashboardPage_ 2026-06-28.png>)
 
-- 経費管理
+#### 経費管理
 ![alt text](./README-picture/ExpensePage_2026-06-28.png)
 
 
