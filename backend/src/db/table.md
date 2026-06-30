@@ -47,7 +47,7 @@ CREATE TABLE sales_list (
     total_price INT NOT NULL,
     total_items INT NOT NULL,
     sales_number INT NOT NULL UNIQUE REFFERENCE item_list(xxxxx),
-    purchase_datetime TIMESTAMP NOT NULL,
+    sales_datetime TIMESTAMP NOT NULL,
     about_items JSON NOT NULL
 );
 
@@ -120,6 +120,34 @@ CREATE TABLE company_setting (
     minimum BIGINT NOT NULL
 );
 
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    email VARCHAR(255) UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    roll VARCHAR(20) NOT NULL DEFAULT 'User',
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+INSERT INTO users (username, email, password_hash, roll)
+VALUES(
+'Admin', 'admin@shokudo.ne.jp', 'admin'
+)
+
+INSERT INTO users (
+    username,
+    email,
+    password_hash,
+    role
+)
+VALUES (
+    'Brother',
+    'aaa@email.com',
+    '$2b$10$T.pcvu.dGh4fOntM5xFNyOjOykDQzkyykSKwuWwAxdVOz7rQrTkzO',
+    'Admin'
+);
+
 =============================================
 
 //\. "$HOME/.nvm/nvm.sh"
@@ -150,6 +178,11 @@ CREATE TABLE company_setting (
 // ※＊NOT NUll削除
 // ALTER TABLE item_list
 // ALTER COLUMN item_name DROP NOT NULL;
+
+//UPDATE sales_list 
+//SET about_items = ‘[{"item_number":102,"item_name":"Strawberry","quantity":3}]’
+//WHERE id = 2;
+
 
 シーケンスを作る
 CREATE SEQUENCE expense_list_id_seq;

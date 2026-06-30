@@ -5,7 +5,7 @@ const pool = require("../db/db");
 
 router.get("/", async(req, res) => {
     try {
-        console.log("API called dashboard");
+    //     console.log("API called dashboard");
         const salesResult = await pool.query(
             `
                 SELECT
@@ -36,7 +36,7 @@ router.get("/", async(req, res) => {
                 ORDER BY quantity ASC
             `
         );
-        console.log(lowStockResult.rows);
+        // console.log(lowStockResult.rows);
 
         const salesData = await pool.query(
             `
@@ -92,6 +92,27 @@ router.get("/", async(req, res) => {
         // console.log("purchase Array");
         // console.log(purchaseData);
 
+        const expenseData = await pool.query(
+            `
+                SELECT
+                    TO_CHAR(
+                        payment_date,
+                        'YYYY/MM/DD'
+                    )AS day,
+
+                    SUM(amount)::INTEGER AS expense
+                FROM expense_list
+                GROUP BY
+                    TO_CHAR(
+                        payment_date,
+                        'YYYY/MM/DD'
+                    )
+                ORDER BY day;
+            `
+        )
+        // console.log("expenseData");
+        // console.log(expenseData);
+
         const balanceOfPayment = {};
 
         for(const row of salesData.rows) {
@@ -101,7 +122,11 @@ router.get("/", async(req, res) => {
                 total_sales: row.sales,
                 //仕入
                 total_purchase: 0,
-                //粗利（日次）
+                //経費（日次）
+                total_expense: 0,
+                //粗利（日次）                
+                gross_profit: row.sales,
+                //利益（日次）
                 profit: row.sales,
                 //累積現金
                 cash: 0,
@@ -111,20 +136,41 @@ router.get("/", async(req, res) => {
         for(const row of purchaseData.rows) {
             if (balanceOfPayment[row.day]) {
                 balanceOfPayment[row.day].total_purchase += row.purchase;
+                balanceOfPayment[row.day].gross_profit -= row.purchase;
                 balanceOfPayment[row.day].profit -= row.purchase;
             } else {
                 balanceOfPayment[row.day] = {
                     day: row.day,
                     total_sales: 0,
                     total_purchase: row.purchase,
+                    total_expense: 0,
+                    gross_profit: 0 - row.purchase,
                     profit: 0 - row.purchase,
                     cash: 0,
                 };
             }
         }
+
+
+        for (const row of expenseData.rows) {
+            if (balanceOfPayment[row.day]) {
+                balanceOfPayment[row.day].total_expense = row.expense;
+                balanceOfPayment[row.day].profit -= row.expense;
+            } else {
+                balanceOfPayment[row.day] = {
+                    day: row.day,
+                    total_salse: 0,
+                    total_purchase: 0,
+                    total_expense: row.expense,
+                    gross_profit: 0,
+                    profit: 0 - row.expense,
+                    cash: 0,
+                };
+            }
+        }
+
         // console.log("balanceOfPayment");
         // console.log(balanceOfPayment);
-
 
         const expenseMaster = await pool.query(
             `
@@ -177,14 +223,57 @@ router.get("/", async(req, res) => {
         //         expense_name: expenseMaster.rows[row.expense_id].expense_name,
         //     }
         // }
-        console.log("expenseListAddMaster");
-        console.log(expenseInputData);
+        // console.log("expenseListAddMaster");
+        // console.log(expenseInputData);
 
         // for(const row of expensePaymentDate.rows) {
         //     if (expenseInputData.rows[id] === row.id) {
         //         expenseInputData[id].payment_date = row[id];
         //     }
         // }
+
+        const salesTopData = await pool.query(
+            `
+                SELECT
+                    item->>'item_name' AS item_name,
+                    SUM(
+                        (item->>'quantity')::int
+                    ) AS total
+                FROM sales_list,
+                LATERAL
+                    json_array_elements(about_items) AS item
+                WHERE
+                    sales_datetime >= CURRENT_DATE - INTERVAL '30 days'
+                GROUP BY
+                    item_name
+                ORDER BY
+                    total DESC
+                LIMIT 3;
+            `
+        );
+        // console.log("salesTopData");
+        // console.log(salesTopData);
+        const salesTopItems = salesTopData.rows;
+
+        const longStockData = await pool.query(
+            `
+                SELECT
+                    item_name,
+                    quantity,
+                    TO_CHAR(
+                        delivery_date,
+                        'YYYY/MM/DD'
+                    )AS stock_date,
+                    CURRENT_DATE - delivery_date AS stock_days
+                FROM stock_list
+                WHERE quantity > 0
+                ORDER BY stock_days ASC
+                LIMIT 5;
+            `
+        );
+        // console.log("agingInventoryData");
+        // console.log(longStockData);
+        const agingInventory = longStockData.rows;
 
 
         const lowStockCount = Number(lowStockResult.rows.length);
@@ -218,7 +307,7 @@ router.get("/", async(req, res) => {
 
         const expenseItems = expenseMaster.rows;
         const expenseList = expenseInputData.rows;
-        console.log(expenseList);
+        // console.log(expenseList);
 
 
         res.json({
@@ -232,6 +321,8 @@ router.get("/", async(req, res) => {
             balanceOfPaymentNum,
             expenseItems,
             expenseList,
+            salesTopItems,
+            agingInventory,
         });
 
     } catch(error) {
@@ -337,8 +428,8 @@ router.put("/", async(req, res) => {
 });
 
 router.delete("/", async(req, res) => {
-    console.log("expense DELETE!!!");
-    console.log(req.body);
+    // console.log("expense DELETE!!!");
+    // console.log(req.body);
     const{id} = req.body;
 
     try {

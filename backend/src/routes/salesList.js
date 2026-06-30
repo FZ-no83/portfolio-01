@@ -22,8 +22,8 @@ router.get("/", async(req, res) => {
 // });
 
 router.post("/", async(req, res) => {
-    console.log("sales!");
-    console.log(req.body);
+    // console.log("sales!");
+    // console.log(req.body);
     let totalPrice = 0;
 
     try {

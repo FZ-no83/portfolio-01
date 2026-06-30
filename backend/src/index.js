@@ -13,6 +13,8 @@ const purchaseRouter = require("./routes/purchaseList");
 
 const dashboardRouter = require("./routes/dashboard");
 
+const loginPageRouter = require("./routes/users");
+
 const app = express();
 
 app.use(cors({
@@ -35,6 +37,8 @@ app.use("/purchaseList", purchaseRouter);
 
 app.use("/dashboardPage", dashboardRouter);
 app.use("/expense_list", dashboardRouter);
+
+app.use("/loginPage", loginPageRouter);
 
 const PORT = 3001;
 

@@ -18,8 +18,8 @@ router.get("/", async(req, res) => {
 
 
 router.post("/", async(req, res) => {
-    console.log("purchase!");
-    console.log(req.body);
+    // console.log("purchase!");
+    // console.log(req.body);
 
     let totalPriceP = 0;
 
@@ -58,7 +58,7 @@ router.post("/", async(req, res) => {
             );
 
             totalPriceP += result.rows[0].price * item.quantity;
-            console.log(totalPriceP);
+            // console.log(totalPriceP);
 
             await pool.query(
                 `
@@ -78,7 +78,7 @@ router.post("/", async(req, res) => {
             (sum, item) => sum + item.quantity,
             0
         );
-        console.log(totalItemsP);
+        // console.log(totalItemsP);
 
         await pool.query(
             `

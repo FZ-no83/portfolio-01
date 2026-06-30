@@ -5,6 +5,8 @@ import { PurchaseForm } from './PurchaseForm';
 import { PurchaseList } from './PurchaseList';
 // import { Page3StockData } from './Page2StockData';
 //import { Page1ListForm } from './Page1ListForm';
+import toast from "react-hot-toast";
+import "./PurchasePage.css";
 
 
 export const PurchasePage = ({stockList, itemList, cart}) => {
@@ -41,17 +43,30 @@ export const PurchasePage = ({stockList, itemList, cart}) => {
 
     const handlePurchase = async () => {
         console.log("仕入れ実行");
-        await fetch(
-            "http://localhost:3001/purchaseList",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(cartItems),
+        try {
+
+            const res = await fetch(
+                "http://localhost:3001/purchaseList",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(cartItems),
+                }
+            );
+
+            if (!res.ok) {
+                throw new Error("仕入・登録失敗");
             }
-        );
-        setCartItems([]);
+
+            toast.success("仕入を発注しました");
+
+            setCartItems([]);
+        } catch(error) {
+            toast.error("仕入の発注に失敗しました");
+            console.error(error);
+        }
     };
 
     const removeCartItem = (cartId) => {
@@ -63,8 +78,8 @@ export const PurchasePage = ({stockList, itemList, cart}) => {
     };
 
     return (
-        <div>
-            <h1>仕入れページ</h1>
+        <div className="page-container">
+            <h1>仕入管理</h1>
             <PurchaseForm 
                 itemList={itemList}
                 addCartItem={addCartItem}

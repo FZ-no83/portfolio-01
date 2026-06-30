@@ -25,6 +25,14 @@ export const SalesForm = ({ addCartItem, stocks }) => {
             // return;
         }
 
+        // const total = cart.reduce((sum, item) => {
+        //     const product = DataTransferItemList.find(
+        //         p => p.item_number === item.item_number
+        //     );
+        //     return sum + (product?.price ?? 0) * item.quantity;
+        // }, 0);
+
+
         const value = 
             evt.target.name === "quantity"
                 ? evt.target.value === ""
@@ -50,6 +58,8 @@ export const SalesForm = ({ addCartItem, stocks }) => {
         const selected = stocks.find(
             (s) => s.item_name === e.target.value
         );
+        console.log("selected");
+        console.log(selected);
 
         if (!selected) return;
         
@@ -90,11 +100,11 @@ export const SalesForm = ({ addCartItem, stocks }) => {
         addCartItem(formData);
         // setFormData({ name: "", quantity: 0 })
         // setItem({ name: ""})
-        // setFormData({
-        //     name: "",
-        //     quantity: "",
-        //     price: "",
-        // });
+        setFormData({
+            item_name: "",
+            quantity: 1,
+            price: 0,
+        });
     };   
 
 
@@ -103,28 +113,45 @@ export const SalesForm = ({ addCartItem, stocks }) => {
         <>
             <form name="selectedItem" method="" onSubmit={handleSubmit}>
                 {/* <label name="selectedItem" /> */}
-                <select name="item_name" value={formData.item_name} onChange={handleSelect}>
-                    {/* <ItemListDataContext.Provider value={ItemListContexts}> */}
-                        {/* {ItemListContexts.map((ilContext) => { */}
-                    <option value="">商品を選択</option>
+                <div className="sales-form">
+                    <select 
+                        className="sales-select"
+                        name="item_name" 
+                        value={formData.item_name} 
+                        onChange={handleSelect}
+                    >
+                        {/* <ItemListDataContext.Provider value={ItemListContexts}> */}
+                            {/* {ItemListContexts.map((ilContext) => { */}
+                        <option value="">商品を選択</option>
 
-                    {stocks.map((s) => (
-                        <option key={s.id} value={s.item_name}>
-                            {s.item_name}
-                        </option>
-                    ))}
-                </select>
-                <p>在庫数：{selectedStock}</p>
-                <input
-                    type="number"
-                    name="quantity"
-                    value={formData.quantity}
-                    onChange={handleChange}
-                />
-                <br />
-                {/* <button type="reset">Reset</button> */}
-                {/* <button type="submit" onClick={handleChange}>Submit</button> */}
-                <button type="submit">カートに追加</button>
+                        {stocks.map((s) => (
+                            <option key={s.id} value={s.item_name}>
+                                {s.item_name}
+                            </option>
+                        ))}
+                    </select>
+                    <input
+                        className="sales-num"
+                        type="number"
+                        name="quantity"
+                        value={formData.quantity}
+                        onChange={handleChange}
+                    />
+                    <a>個</a>
+                    <h4>在庫数：{selectedStock}</h4>
+                    {/* <button type="reset">Reset</button> */}
+                    {/* <button type="submit" onClick={handleChange}>Submit</button> */}
+                    {/* <div className="sales-total">
+                        合計：¥{total.toLocalString()}
+                    </div> */}
+                    
+                    <button 
+                        className="sales-add"
+                        type="submit"
+                    >
+                        カートに追加
+                    </button>
+                </div>
             </form>
         </>
     );

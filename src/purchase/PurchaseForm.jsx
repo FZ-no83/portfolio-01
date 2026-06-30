@@ -2,6 +2,7 @@ import React, { useState } from "react";
 // import React, { useState, useContext } from "react";
 import { v4 as uuid } from "uuid";
 // import ItemListDataContext from "./data/itemListData";
+import "./PurchasePage.css";
 
 
 export const PurchaseForm = ({ itemList, addCartItem }) => {
@@ -69,32 +70,49 @@ export const PurchaseForm = ({ itemList, addCartItem }) => {
 
     return (
         <>
+
             <form name="selectedItem" method="" onSubmit={handleSubmit}>
+                <div className="purchase-form">
                 {/* <label name="selectedItem" /> */}
                 {/* <select name="selectedItem" value={item.name} onChange={handleSelect}> */}
-                <select name="item_name" value={formData.item_name} onChange={handleSelect}>
-                    <option value="">
-                        商品を選択
-                    </option>
-                    {/* <ItemListDataContext.Provider value={ItemListContexts}> */}
-                        {/* {ItemListContexts.map((ilContext) => { */}
-                    {itemList.map((i) => (
-                        <option key={i.id} value={i.item_name}>
-                            {i.item_name}
+                    <select
+                        className="purchase-select" 
+                        name="item_name" 
+                        value={formData.item_name} 
+                        onChange={handleSelect}
+                    >
+                        <option value="">
+                            商品を選択
                         </option>
-                    ))}
-                </select>
-                <input
-                    type="number"
-                    name="quantity"
-                    value={formData.quantity}
-                    onChange={handleChange}
-                />
-                <br />
-                {/* <button type="reset">Reset</button> */}
-                {/* <button type="submit" onClick={handleChange}>Submit</button> */}
-                <button type="submit">追加</button>
+                        {/* <ItemListDataContext.Provider value={ItemListContexts}> */}
+                            {/* {ItemListContexts.map((ilContext) => { */}
+                        {itemList.map((i) => (
+                            <option key={i.id} value={i.item_name}>
+                                {i.item_name}
+                            </option>
+                        ))}
+                    </select>
+                    {/* <div className="purchase-num"> */}
+                    <input
+                        className="purchase-num"
+                        type="number"
+                        name="quantity"
+                        value={formData.quantity}
+                        onChange={handleChange}
+                    />
+                    <a>個</a>
+                    {/* </div> */}
+                    {/* <button type="reset">Reset</button> */}
+                    {/* <button type="submit" onClick={handleChange}>Submit</button> */}
+                    <button 
+                    className="purchase-add"
+                        type="submit"
+                    >
+                        追加
+                    </button>
+                </div>
             </form>
+        
         </>
     );
 };
